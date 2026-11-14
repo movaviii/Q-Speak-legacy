@@ -20,6 +20,7 @@ partial class QForm
         {
             AttachThreadInput(GetCurrentThreadId(), GetWindowThreadProcessId(GetForegroundWindow(), out _), true);
             _input.Clear();
+            _history.Reset();
             Show();
             Activate();
             BringToFront();

@@ -9,4 +9,5 @@ internal partial class Config
     public required int Rate { get; set; }
     public required int Volume { get; set; }
     public required Keys KeyBind { get; set; }
+    public List<string> History { get; set; } = [];
 }

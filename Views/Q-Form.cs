@@ -1,10 +1,11 @@
 namespace Q_speak;
 
 using SpVoice;
+using Q_speak.Models;
 public partial class QForm : Form
 {
     private string _currentVoice = _config.PreferredVoice;
-    private string _lastText = "";
+    private readonly MessageHistory _history = new(_config.History ??= []);
     public QForm()
     {
         InitializeComponent();
@@ -41,7 +42,14 @@ public partial class QForm : Form
                 return;
 
             case Keys.Up:
-                (_lastText, _input.Text) = (_input.Text, _lastText);
+                if (!_input.Focused) return;
+                _input.Text = _history.Previous(_input.Text);
+                _input.SelectionStart = _input.Text.Length;
+                break;
+
+            case Keys.Down:
+                if (!_input.Focused) return;
+                _input.Text = _history.Next(_input.Text);
                 _input.SelectionStart = _input.Text.Length;
                 break;
 
@@ -62,9 +70,10 @@ public partial class QForm : Form
     {
         var text = _input.Text.Trim();
         if (string.IsNullOrEmpty(text)) return;
-        _lastText = text;
         Hide();
         _qSpeak.Speak($"<pitch absmiddle='{Math.Clamp(_config.Pitch, -10, 10)}'>{text}</pitch>", SpeechVoiceSpeakFlags.SVSFIsXML | SpeechVoiceSpeakFlags.SVSFlagsAsync);
+        _history.Add(text);
+        PostConfig(_config);
     }
 
     private void StopSpeak()
