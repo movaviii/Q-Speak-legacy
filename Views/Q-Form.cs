@@ -24,6 +24,8 @@ public partial class QForm : Form
 
         _qSpeak.Voice = _qSpeak.GetVoices().Cast<SpObjectToken>().FirstOrDefault(o => o.GetDescription() == _currentVoice);
         _qSpeak.AudioOutput = _qSpeak.GetAudioOutputs().Cast<SpObjectToken>().FirstOrDefault(o => o.GetDescription() == _config.PreferredOutput);
+        _qSpeak.Rate = Math.Clamp(_config.Rate, -10, 10);
+        _qSpeak.Volume = Math.Clamp(_config.Volume, 0, 100);
     }
 
     private void QKeyDown(object? sender, KeyEventArgs e)
